@@ -123,6 +123,7 @@ class Interpreter
     public function __construct($tokens)
     {
         $this->tokens = $tokens;
+        $this->response = '';
     }
 
     public function run()
@@ -193,10 +194,11 @@ class Interpreter
                     $this->pc = array_pop($callstack);
                     break;
                 case Opcodes::quit:
+                    return $this->response;
                     die();
                     break;
                 case Opcodes::outchar:
-                    echo chr(array_pop($stack));
+                    $this->response .= chr(array_pop($stack));
                     break;
                 case Opcodes::outnum:
                     echo array_pop($stack);
@@ -249,23 +251,6 @@ class Interpreter
         }
         die("Label not found: $label");
     }
-}
-
-if ($_SERVER['argc'] == 2) {
-    $file = $_SERVER['argv'][1];
-    if (file_exists($file)) {
-        $code = file_get_contents($file);
-    } elseif (file_exists(__DIR__.'/'.$file)) {
-        $code = file_get_contents(__DIR__.'/'.$file);
-    } else {
-        exit("Could not open file: $file\n");
-    }
-
-    $tokenizer = new Tokenizer($code);
-    $interpreter = new Interpreter($tokenizer->get_tokens());
-    $interpreter->run();
-} else {
-    echo "Usage: php whitespace.php whitespace.ws\n";
 }
 
 function pparr($arr)
