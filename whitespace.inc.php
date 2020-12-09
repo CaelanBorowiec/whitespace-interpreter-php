@@ -112,7 +112,8 @@ class Tokenizer
         // foreach ($this->tokens as $token) {
         //     echo pparr($token)."\n";
         // }
-        die("Unknown command: ".str_replace([" ", "\t", "\n"], ["S", "T", "L"], $this->program));
+        error_log("Unknown command: ".str_replace([" ", "\t", "\n"], ["S", "T", "L"], $this->program));
+        die();
     }
 }
 
@@ -134,7 +135,8 @@ class Interpreter
         $callstack = [];
         while (true) {
             if (!isset($this->tokens[$this->pc])) {
-                die("Program ended with the programcounter going above the number of instructions.");
+                error_log("Program ended with the programcounter going above the number of instructions.");
+                return false;
             }
             list($opcode, $arg) = array_pad($this->tokens[$this->pc], 2, null);
             $this->pc++;
@@ -214,7 +216,8 @@ class Interpreter
                     $heap[array_pop($stack)] = (int)$c;
                     break;
                 default:
-                    die("Unknown instruction: $opcode");
+                    error_log("Unknown instruction: $opcode");
+                    return false;
                     break;
             }
             // echo $opcode.":\n";
@@ -237,7 +240,8 @@ class Interpreter
             case Opcodes::mod:
                 return $x % $y;
              default:
-                die('Operand not a valid operator.');
+                error_log('Operand not a valid operator.');
+                die();
         }
     }
 
@@ -249,7 +253,8 @@ class Interpreter
                 return;
             }
         }
-        die("Label not found: $label");
+        error_log("Label not found: $label");
+        die();
     }
 }
 
